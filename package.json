@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "description": "Maven-like local package repository for Node.js projects",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aloketewary/node-glue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aloketewary/node-glue/issues"
+  },
+  "homepage": "https://github.com/aloketewary/node-glue#readme",
   "keywords": [
     "nodejs",
     "npm",
