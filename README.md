@@ -12,6 +12,7 @@ The result is shared package content without forcing unrelated projects to share
 [![Node.js >= 20.5](https://img.shields.io/badge/node-%3E%3D20.5-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![TypeScript 5.8](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tests: Vitest](https://img.shields.io/badge/tests-Vitest-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![CI](https://github.com/aloketewary/node-glue/actions/workflows/ci.yml/badge.svg)](https://github.com/aloketewary/node-glue/actions/workflows/ci.yml)
 
 ## How it works
 
@@ -109,10 +110,12 @@ For later releases, bump version before publishing:
 
 ```bash
 npm version patch
-npm publish --access public
+git push origin master --follow-tags
 ```
 
-`npm version` updates `package.json` and `package-lock.json`. The package build reads its runtime version from `package.json`, and `prepack` runs checks plus a clean build before npm creates the release tarball.
+GitHub Actions runs CI on pushes and pull requests across supported macOS/Linux and Node.js versions. The publish workflow publishes a GitHub Release tag such as `v0.1.0` to npm with provenance. Configure npm Trusted Publishing for this repository and the `npm-publish` GitHub environment before using automated publishing.
+
+`npm version` updates `package.json` and `package-lock.json`. The package build reads the runtime version from `package.json`, and `prepack` runs checks before npm creates the release tarball.
 
 ## CLI
 
