@@ -296,6 +296,11 @@ export class ProjectMapRepository {
     return published;
   }
 
+  async remove(projectId: string): Promise<void> {
+    const mapPath = this.mapPath(projectId);
+    await this.filesystem.remove(mapPath, { force: true });
+  }
+
   async list(): Promise<readonly ProjectMapSummary[]> {
     if (!(await this.filesystem.exists(this.projectsDir))) return [];
     const entries = await this.filesystem.listDirectory(this.projectsDir);

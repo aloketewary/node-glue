@@ -234,6 +234,10 @@ export class ProjectMapRepository {
         });
         return published;
     }
+    async remove(projectId) {
+        const mapPath = this.mapPath(projectId);
+        await this.filesystem.remove(mapPath, { force: true });
+    }
     async list() {
         if (!(await this.filesystem.exists(this.projectsDir)))
             return [];

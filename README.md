@@ -1,255 +1,307 @@
 # Node Glue
 
-> A Maven-like local package repository for Node.js projects.
+Node Glue is a local package repository and project materializer for Node.js. It stores verified package instances once, records each project's exact dependency map, and creates a project-specific `node_modules` tree from links into the store.
 
-Node Glue is being built to make dependency reuse predictable, safe, and project-specific. The long-term goal is to download a package version once, keep it in an immutable local store, and materialize the exact dependency layout each project needs—without forcing unrelated projects to share one `node_modules` tree.
+The result is shared package content without forcing unrelated projects to share one dependency layout.
 
-**Current package:** `node-glue`  
-**CLI name:** `node-glue`  
-**Status:** Foundation / early MVP
+**Package:** `node-glue`
+**CLI:** `node-glue`
+**Version:** `0.1.0`
+**Status:** MVP implementation
 
 [![Node.js >= 20.5](https://img.shields.io/badge/node-%3E%3D20.5-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tests](https://img.shields.io/badge/tests-Vitest-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![TypeScript 5.8](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tests: Vitest](https://img.shields.io/badge/tests-Vitest-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
 
-## Why Node Glue?
+## How it works
 
-Modern Node.js projects repeatedly download and unpack the same package versions. At the same time, a single shared `node_modules` directory cannot safely represent every project's dependency graph, peer dependency context, platform, or lockfile.
-
-Node Glue separates those concerns:
+Node Glue separates package acquisition from project materialization:
 
 ```text
-Immutable package store
-          +
-Project-specific dependency map
-          +
-Generated project links
+Verified immutable package store
+              +
+Collision-safe project map
+              +
+Staged project-specific node_modules generation
+              ↓
+Project-root node_modules symlink
 ```
 
-This model is intended to provide:
+For a project, Node Glue:
 
-- **Faster project setup:** reuse package content already present locally.
-- **Reproducible installs:** derive project state from package metadata and lockfile identity.
-- **Correct isolation:** preserve each project's own dependency layout and package versions.
-- **Safer operations:** verify package content, reject unsafe archives, and keep storage boundaries explicit.
-- **Familiar workflows:** remain compatible with the Node.js and npm ecosystem rather than introducing a new package format.
+1. Finds the project root by locating `package.json` in the requested directory or an ancestor.
+2. Reads and hashes `package.json` and, when present, `package-lock.json`.
+3. Resolves the dependency graph, including transitive dependencies, multiple versions, scoped packages, peer contexts, optional dependencies, and platform conditions.
+4. Fetches missing package instances and verifies their manifests and integrity evidence.
+5. Publishes verified content atomically into the central store.
+6. Writes a project map and stages a complete dependency tree.
+7. Runs only explicitly permitted lifecycle scripts, when enabled.
+8. Publishes a new generation and updates the project-root `node_modules` symlink.
 
-## What exists today
+Unchanged, healthy projects are reused without reacquiring packages.
 
-The current release is the foundation for the repository engine, not a finished install replacement. It includes:
+## Supported platforms and inputs
 
-- Project-root discovery by walking ancestor directories for `package.json`.
-- Project input reading with deterministic SHA-256 hashes for `package.json` and, when present, `package-lock.json`.
-- Validation for npm lockfile versions 2 and 3.
-- Injectable source adapters for:
-  - npm-style registry packages and semver resolution;
-  - absolute local directories;
-  - Git sources and resolved revisions;
-  - HTTP(S) tarballs.
-- Package manifest validation and registry integrity verification when integrity metadata is supplied.
-- Defensive archive extraction that rejects traversal, absolute paths, duplicate paths, symlinks, unsupported entries, and malformed package roots.
-- Structured, sanitized diagnostics through typed repository errors.
-- An adapter-oriented TypeScript architecture that can be tested without relying on live registries or the host filesystem.
-
-## What is next
-
-The product direction is to add the repository lifecycle around this foundation:
-
-1. Resolve package trees from npm lockfiles.
-2. Store verified package instances centrally and immutably.
-3. Maintain project maps keyed by project and lockfile state.
-4. Materialize project-specific `node_modules` and `.bin` links.
-5. Add controlled lifecycle-script handling for project-context builds.
-6. Provide functional `install`, `ensure`, `exec`, `doctor`, and `gc` commands.
-7. Add an opt-in npm shim so familiar commands can use the repository transparently.
-
-These capabilities are design targets. They are **not yet shipped** in the current package.
-
-## Quick start
-
-### Requirements
-
-- macOS or Linux
+- macOS and Linux
 - Node.js `>=20.5.0`
-- npm
+- npm package manifests
+- `package-lock.json` versions 2 and 3
+- Projects without an existing lockfile; Node Glue generates and publishes one during installation
+- Registry, local directory, Git, and HTTP(S) tarball sources
+- Direct and transitive dependencies, scoped packages, multiple versions, peer placements, optional dependencies, and platform-specific dependencies
 
-### Install dependencies and verify the project
+Workspaces, Yarn lockfiles, pnpm lockfiles, and Windows are outside this MVP.
+
+## Installation and development
+
+Clone the repository, install its pinned dependencies, then run the checks:
 
 ```bash
 npm ci
 npm run check
 ```
 
-### Build
+Build the package:
 
 ```bash
 npm run build
 ```
 
-Build output is written to `dist/`, including JavaScript, declarations, declaration maps, and source maps.
+Build output is written to `dist/`. The published package contains the compiled `dist/` directory.
 
-### Inspect the current CLI scaffold
+Run the CLI from a built checkout:
 
 ```bash
 node dist/cli.js --help
 node dist/cli.js --version
 ```
 
-The CLI currently implements help and version reporting. The command names shown by help are the planned interface; dependency installation and materialization are not yet dispatched.
+Install the local package globally or link it when testing the executable through `PATH`:
 
-## Library usage
+```bash
+npm install
+npm link
+node-glue --help
+```
 
-The package exposes project-input and source-adapter primitives as an ESM library. For example, read and fingerprint the nearest Node.js project:
+## CLI
+
+```text
+node-glue <command> [options]
+```
+
+### Project commands
+
+```bash
+node-glue install
+node-glue ensure
+node-glue exec -- npm test
+node-glue doctor
+```
+
+- `install` resolves, acquires, and materializes project dependencies.
+- `ensure` verifies existing project state and repairs it when input or materialization is stale.
+- `exec -- <command> [args...]` ensures the project, then runs the command with the project root as its working directory.
+- `doctor` performs read-only diagnostics for maps, state, store references, generations, symlinks, and platform capabilities. It exits nonzero when the project is not ready.
+
+### Store and shell commands
+
+```bash
+node-glue gc
+node-glue enable
+node-glue disable
+```
+
+- `gc` removes only verified package instances not referenced by any valid project map. It aborts before deletion when map or reference state is uncertain.
+- `enable` creates tool-owned `npm` and `npx` wrappers in `~/.node_modules/bin` and adds a marked PATH block to the active shell startup file.
+- `disable` removes only Node Glue's marked PATH block. It does not replace or remove the system npm installation.
+
+### Options
+
+```text
+--project-root <path>  Project directory (default: current directory)
+--store-dir <path>    Store directory (default: ~/.node_modules)
+--registry <url>      npm registry URL
+--run-scripts          Enable configured lifecycle scripts
+-h, --help             Show help
+-v, --version          Show version
+```
+
+`install` and `ensure` emit JSON results on success. `exec` forwards the child process output and exit status. Diagnostics use stable error codes and redact credentials from messages and context.
+
+## Opt-in npm integration
+
+After enabling PATH integration, the generated npm shim keeps npm responsible for package metadata while Node Glue owns acquisition and materialization:
+
+```bash
+node-glue enable
+npm install express
+npm ci
+npm run build
+npx tsc
+node-glue disable
+```
+
+Dispatch behavior:
+
+- `npm install`, `npm i`, `npm uninstall`, and `npm update` delegate metadata changes to the real npm with `--package-lock-only` and `--ignore-scripts`, then ensure the project.
+- `npm ci` validates the lockfile, prepares proven tool-owned links, and materializes the locked tree without normal npm reification.
+- `npm run`, `npm test`, and `npx` ensure the project before delegation.
+- `npm config`, `npm version`, and unknown commands pass through to the real npm.
+
+The shim resolves the real npm executable while excluding its own bin directory, preventing recursive dispatch. PATH integration is opt-in and reversible; Node Glue does not modify the system npm binary.
+
+## Store layout
+
+The default store is `~/.node_modules`. A custom location can be supplied with `--store-dir` or the library API.
+
+```text
+<store>/
+├── packages/
+│   └── <encoded-package-name>/
+│       └── <64-character-identity-hash>/
+│           ├── content/
+│           └── instance.json
+├── projects/
+│   └── <project-id>/
+│       ├── map.json
+│       ├── state.json
+│       └── generations/
+│           └── <generation>/
+│               └── node_modules/
+└── tmp/
+```
+
+Package identity includes the package name, version or Git revision, canonical source fingerprint, available integrity, and applicable environment attributes. Project IDs include the canonical project root and collision-resistant data; a path collision never silently overwrites another project's map.
+
+Project maps contain exact package placements and store identity hashes, not credential-bearing locators. The active project `node_modules` path is a symlink to a validated, tool-owned generation.
+
+## Safety guarantees
+
+Node Glue treats package sources and existing project state as untrusted input:
+
+- Registry integrity is checked when integrity metadata is available.
+- Package manifests must match the resolved package identity.
+- Archive extraction rejects traversal, absolute paths, duplicate paths, symlinks, unsupported entries, malformed roots, and unsafe package layouts.
+- Git sources record resolved revisions.
+- Local directory sources are canonicalized and reject symlinks.
+- Package publication uses temporary directories and atomic rename boundaries.
+- Central package content is never used as a lifecycle-script working directory.
+- Lifecycle scripts are disabled by default and require an explicit allowlist when enabled.
+- Lifecycle execution happens in project context with protected store paths and isolated output directories.
+- Existing `node_modules` content is replaced only when Node Glue can prove it owns the current symlink and generation. Unmanaged, broken, unknown, or ambiguous state is preserved and reported.
+- Failed publication restores the previous successful map, generation, symlink, and state where possible.
+- Garbage collection validates all project maps and references before removing anything.
+- Diagnostics and persisted maps redact credentials and tokens.
+
+## Library API
+
+The package is ESM and exposes the orchestration API plus lower-level resolver, source, store, map, materializer, lifecycle, diagnostic, and npm-integration primitives.
 
 ```ts
-import { readProjectInput } from 'node-glue';
+import { ensureProject, inspectProject } from 'node-glue';
 
-const project = await readProjectInput(process.cwd());
+const result = await ensureProject({
+  projectRoot: process.cwd(),
+  // storeDir: '/path/to/store',
+  // registry: 'https://registry.npmjs.org',
+  // runScripts: true,
+});
 
-console.log({
-  root: project.projectRoot,
-  packageJsonHash: project.packageJsonHash,
-  lockfileHash: project.lockfileHash,
+console.log(result);
+// {
+//   projectRoot: '/path/to/project',
+//   packagesAdded: 4,
+//   packagesReused: 12,
+//   packagesRemoved: 0,
+//   materializationGeneration: '...'
+// }
+
+const state = await inspectProject(process.cwd());
+console.log(state.status); // 'ready' | 'incomplete' | 'unknown'
+```
+
+For embedding and tests, `createNodeGlueApi` accepts injected filesystem, transport, process, lock, clock, store, resolver, materializer, lifecycle, Doctor, and garbage-collector collaborators. This keeps network access, filesystem mutation, child processes, and time replaceable at integration boundaries.
+
+Lifecycle policy can be narrowed to an explicit package/script allowlist:
+
+```ts
+import { ensureProject } from 'node-glue';
+
+await ensureProject({
+  projectRoot: process.cwd(),
+  lifecyclePolicy: {
+    enabled: true,
+    allowedPackages: ['some-native-package'],
+    allowedScripts: ['some-native-package:install'],
+  },
 });
 ```
-
-This reads project metadata only. It does not resolve dependencies, download packages, or create `node_modules`.
-
-Source adapters are designed around explicit infrastructure boundaries so production and test implementations can be supplied independently:
-
-```ts
-import {
-  SourceAdapterRegistry,
-  createDefaultSourceAdapters,
-} from 'node-glue';
-
-const adapters = new SourceAdapterRegistry(
-  createDefaultSourceAdapters({
-    filesystem,
-    registry: registryTransport,
-    sources: sourceTransport,
-  }),
-);
-
-const resolved = await adapters.resolve(dependencySource);
-await adapters.fetch(resolved, destination);
-```
-
-`filesystem`, `registryTransport`, and `sourceTransport` are intentionally supplied by the caller. The current package does not yet provide a default production store or network wiring.
 
 ## Architecture
 
 ```text
 src/
-├── index.ts                 Public package exports
-├── cli.ts                   Thin CLI scaffold
-├── project.ts               Project-root discovery
-├── input-reader.ts          Manifest/lockfile reading and hashing
-├── types.ts                 Domain models and public types
-├── errors.ts                Structured diagnostics and redaction
-├── adapters/                Injectable filesystem, process, lock, time, and transport contracts
-└── sources/                 Registry, directory, Git, tarball, and archive logic
+├── api.ts                     Install/ensure/inspect/doctor/gc orchestration
+├── cli.ts                    CLI parsing, JSON output, and exec handling
+├── dependency-resolver.ts    Arborist-backed dependency graph resolution
+├── input-reader.ts           Project manifest and lockfile input
+├── lockfile.ts               Lockfile v2/v3 normalization and generation
+├── package-store.ts          Verified immutable package publication and reuse
+├── project-map.ts            Collision-safe project map persistence
+├── materializer.ts           Staged dependency-tree generation publication
+├── bin-links.ts              Project-specific executable links
+├── lifecycle.ts              Explicit, isolated lifecycle execution
+├── doctor.ts                 Read-only project and repository diagnostics
+├── gc.ts                     Reference-preserving garbage collection
+├── npm/                      Real npm discovery, shim dispatch, PATH integration
+├── sources/                  Registry, directory, Git, tarball, and archive logic
+├── adapters/                 Injectable filesystem, process, lock, time, and transport contracts
+└── platform/                 Capability and protected-path integration
 ```
 
-Key design choices:
+Important boundaries:
 
-- **Explicit boundaries:** filesystem, registry, source transport, process, time, and locking are represented as adapters.
-- **Fail-closed source selection:** unsupported source formats produce structured errors instead of falling through silently.
-- **Content validation before publication:** manifests, archive paths, package identity, and integrity are checked before package content is accepted.
-- **Deterministic project identity:** source metadata is hashed before future resolution and materialization work.
-- **Thin CLI:** orchestration belongs in the library core; the CLI should remain a small user-facing entry point.
+- Arborist interprets npm dependency graphs; Node Glue owns storage and final project materialization.
+- Source adapters own source-specific resolution, transport, and archive handling.
+- The package store publishes only verified content and never runs lifecycle scripts.
+- The materializer builds and validates a complete generation before changing the project-root link.
+- The CLI stays thin; orchestration is available through the library API.
 
-## Supported source inputs
+## Testing
 
-| Source | Current support | Notes |
-| --- | --- | --- |
-| Registry | Implemented adapter | Exact versions, dist-tags, and semver ranges through injected registry transport |
-| Local directory | Implemented adapter | Absolute paths; canonicalized and recursively copied; symlink sources rejected |
-| Git | Implemented adapter | Revision resolution delegated to injected source transport |
-| Tarball | Implemented adapter | HTTP(S) fetch plus guarded archive extraction |
-
-The source adapters are usable building blocks. They are not yet connected to a complete dependency resolver or install command.
-
-## Safety model
-
-The implementation treats package acquisition as an untrusted-input boundary:
-
-- Registry integrity is checked when supported integrity metadata is available.
-- Credential-bearing URLs are rejected and diagnostic context is sanitized.
-- Archive traversal and absolute paths are rejected.
-- Unsupported archive entry types and extended metadata are rejected.
-- Package archives must contain one valid package root and `package.json`.
-- Local source symlinks are rejected.
-- Errors carry stable codes and safe context for diagnostics.
-
-The planned central store will add immutability, atomic publication, ownership tracking, and garbage collection. Those guarantees should not be assumed from the current foundation alone.
-
-## Development
-
-Run the full local validation suite:
+Run all type checks and tests:
 
 ```bash
 npm run check
 ```
 
-Run only tests:
+Run only the test suite:
 
 ```bash
 npm test
 ```
 
-Run the TypeScript compiler without emitting files:
+Run TypeScript without emitting files:
 
 ```bash
 npm run typecheck
 ```
 
-Run tests in watch mode during development:
+Run the Vitest watcher during development:
 
 ```bash
 npm run test:watch
 ```
 
-Tests use Vitest and cover project discovery, input parsing, lockfile validation, hashing, CLI flags, source adapters, semver selection, local copying, Git revision capture, archive safety, and fixture seams.
+The test suite uses fake filesystem, source, process, store, lock, and failure-injection adapters. Coverage includes project discovery, lockfile normalization and generation, source resolution, semver selection, package identity, integrity verification, immutable publication and reuse, project-map collision handling, ownership checks, staged materialization, rollback, lifecycle isolation, CLI behavior, Doctor, garbage collection, and npm shim dispatch.
 
-## Project roadmap
+## Project documents
 
-### Foundation — current
+- [`docs/node-glue-mvp.md`](docs/node-glue-mvp.md) — provisional design rationale and storage model.
+- [`.kiro/specs/node-glue-mvp/tasks.md`](.kiro/specs/node-glue-mvp/tasks.md) — implementation plan and acceptance traceability.
 
-- [x] TypeScript/ESM package and CLI entry point
-- [x] Project discovery and input fingerprinting
-- [x] Lockfile v2/v3 validation
-- [x] Registry, directory, Git, and tarball source adapter contracts
-- [x] Manifest, integrity, and archive safety validation
-- [x] Structured diagnostics and test doubles
-
-### Repository engine — next
-
-- [ ] npm-compatible dependency-tree resolution
-- [ ] Content-addressed or immutable package storage
-- [ ] Project maps and lockfile change detection
-- [ ] Atomic project materialization
-- [ ] Project-specific `node_modules` and `.bin` links
-- [ ] Concurrency and stale-lock handling
-
-### Developer experience — planned
-
-- [ ] Functional `node-glue install` and `node-glue ensure`
-- [ ] `node-glue exec`, `doctor`, and `gc`
-- [ ] Opt-in npm shim and reversible `PATH` integration
-- [ ] Controlled lifecycle and native-package handling
-- [ ] Broader workspace and package-manager support
-
-## Contributing
-
-Contributions should preserve the adapter boundaries and keep untrusted package input fail-closed. Before opening a change:
-
-1. Keep public behavior documented by tests.
-2. Add or update focused tests for changed source, parser, or error behavior.
-3. Run `npm run check`.
-4. Avoid presenting roadmap behavior as implemented behavior.
-
-See [`docs/node-glue-mvp.md`](docs/node-glue-mvp.md) for the provisional product design, storage model, npm integration proposal, open decisions, and longer-term architecture.
+The implementation tasks supersede older open decisions in the provisional design where they differ, including no-lockfile support, Git and tarball sources, explicit lifecycle opt-in, project-wide symlink materialization, and fail-closed handling of unmanaged `node_modules`.
 
 ## License
 

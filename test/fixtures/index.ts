@@ -5,4 +5,5 @@ export * from './fake-store.js';
 export * from './graph.js';
 export * from './project-data.js';
 export * from './property-tags.js';
+export * from './real-filesystem.js';
 export * from './temporary-project.js';

@@ -126,6 +126,9 @@ export class ProjectStateRepository {
             throw new ProjectMapError('Project state could not be read.', { statePath }, cause);
         }
     }
+    async remove(projectId) {
+        await this.filesystem.remove(this.statePath(projectId), { force: true });
+    }
     async publish(state) {
         const validated = validateProjectState(state);
         const statePath = this.statePath(validated.projectId);

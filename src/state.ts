@@ -154,6 +154,10 @@ export class ProjectStateRepository {
     }
   }
 
+  async remove(projectId: string): Promise<void> {
+    await this.filesystem.remove(this.statePath(projectId), { force: true });
+  }
+
   async publish(state: ProjectState): Promise<ProjectState> {
     const validated = validateProjectState(state);
     const statePath = this.statePath(validated.projectId);

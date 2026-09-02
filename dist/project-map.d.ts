@@ -32,6 +32,7 @@ export declare class ProjectMapRepository {
     mapPath(projectId: string): string;
     read(projectId: string): Promise<ProjectMap | undefined>;
     publish(map: ProjectMap): Promise<ProjectMap>;
+    remove(projectId: string): Promise<void>;
     list(): Promise<readonly ProjectMapSummary[]>;
     private validateReferences;
     private inspectCandidate;

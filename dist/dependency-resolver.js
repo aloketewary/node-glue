@@ -341,13 +341,13 @@ function sourceFromLocator(name, version, locator, integrity, registry, projectR
     const source = dependencySourceFromLocator(name, version, resolvedLocator, registry, projectRoot);
     const sourceFingerprint = source.kind === 'registry'
         ? `registry:${source.registry}/${name}@${version}`
-        : `${source.kind}:${resolvedLocator}`;
+        : `${source.kind}:${source.kind === 'directory' ? source.path : resolvedLocator}`;
     return {
         source,
         name,
         versionOrRevision: version,
         ...(integrity === undefined ? {} : { integrity }),
-        resolvedLocator,
+        resolvedLocator: source.kind === 'directory' ? source.path : resolvedLocator,
         sourceFingerprint
     };
 }

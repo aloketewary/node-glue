@@ -11,8 +11,16 @@ export * from './dependency-resolver.js';
 export * from './project-map.js';
 export * from './state.js';
 export * from './ownership.js';
+export * from './doctor.js';
+export * from './gc.js';
+export * from './materializer.js';
+export * from './bin-links.js';
 export * from './locks.js';
 export * from './sources/index.js';
 export * from './lifecycle.js';
 export * from './platform/index.js';
+export * from './api.js';
+export * from './npm/real-npm.js';
+export * from './npm/shim.js';
+export * from './npm/path-integration.js';
 //# sourceMappingURL=index.d.ts.map

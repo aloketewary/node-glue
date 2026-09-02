@@ -28,6 +28,7 @@ export declare class ProjectStateRepository {
     constructor(options: ProjectStateRepositoryOptions);
     statePath(projectId: string): string;
     read(projectId: string): Promise<ProjectState | undefined>;
+    remove(projectId: string): Promise<void>;
     publish(state: ProjectState): Promise<ProjectState>;
 }
 export type CleanupKind = 'temporary' | 'generations';
