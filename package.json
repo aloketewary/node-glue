@@ -56,7 +56,7 @@
   "dependencies": {
     "@npmcli/arborist": "8.0.0",
     "cacache": "21.0.1",
-    "pacote": "19.0.2",
+    "pacote": "22.0.0",
     "semver": "7.8.5"
   },
   "devDependencies": {
