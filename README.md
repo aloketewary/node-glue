@@ -54,35 +54,65 @@ Workspaces, Yarn lockfiles, pnpm lockfiles, and Windows are outside this MVP.
 
 ## Installation and development
 
-Clone the repository, install its pinned dependencies, then run the checks:
+Install the published package locally in a project:
+
+```bash
+npm install --save-dev node-glue
+npx --no-install node-glue install
+```
+
+For a machine-wide CLI installation, use a user-owned npm prefix or a Node.js version manager such as `nvm`; npm must have permission to write its global bin directory:
+
+```bash
+npm install --global node-glue
+node-glue --help
+```
+
+For repository development, install pinned dependencies and run the checks:
 
 ```bash
 npm ci
 npm run check
-```
-
-Build the package:
-
-```bash
 npm run build
 ```
 
-Build output is written to `dist/`. The published package contains the compiled `dist/` directory.
+Build output is written to `dist/`. `npm pack` and `npm publish` run the release checks and rebuild `dist/` automatically, so a stale local build cannot be published.
 
-Run the CLI from a built checkout:
+Run the CLI directly from a built checkout:
 
 ```bash
 node dist/cli.js --help
 node dist/cli.js --version
 ```
 
-Install the local package globally or link it when testing the executable through `PATH`:
+## Publishing
+
+Before the first public release, this package is distributed under the [MIT License](LICENSE). Release history is documented in [`CHANGELOG.md`](CHANGELOG.md).
+
+Check the package without publishing it:
 
 ```bash
-npm install
-npm link
-node-glue --help
+npm run check
+npm pack --dry-run
+npm publish --dry-run
 ```
+
+After authenticating with npm, publish the current first-release version:
+
+```bash
+npm login
+npm whoami
+npm publish --access public
+```
+
+For later releases, bump version before publishing:
+
+```bash
+npm version patch
+npm publish --access public
+```
+
+`npm version` updates `package.json` and `package-lock.json`. The package build reads its runtime version from `package.json`, and `prepack` runs checks plus a clean build before npm creates the release tarball.
 
 ## CLI
 
@@ -299,10 +329,13 @@ The test suite uses fake filesystem, source, process, store, lock, and failure-i
 ## Project documents
 
 - [`docs/node-glue-mvp.md`](docs/node-glue-mvp.md) — provisional design rationale and storage model.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — development and package-validation workflow.
+- [`CHANGELOG.md`](CHANGELOG.md) — release history.
+- [`LICENSE`](LICENSE) — MIT license terms.
 - [`.kiro/specs/node-glue-mvp/tasks.md`](.kiro/specs/node-glue-mvp/tasks.md) — implementation plan and acceptance traceability.
 
 The implementation tasks supersede older open decisions in the provisional design where they differ, including no-lockfile support, Git and tarball sources, explicit lifecycle opt-in, project-wide symlink materialization, and fail-closed handling of unmanaged `node_modules`.
 
 ## License
 
-No license has been declared yet.
+Node Glue is distributed under the [MIT License](LICENSE). Copyright (c) 2026 Aloke Tewary.

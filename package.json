@@ -2,6 +2,14 @@
   "name": "node-glue",
   "version": "0.1.0",
   "description": "Maven-like local package repository for Node.js projects",
+  "license": "MIT",
+  "keywords": [
+    "nodejs",
+    "npm",
+    "package-manager",
+    "dependencies",
+    "node-modules"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,7 +23,10 @@
     "node-glue": "./dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md"
   ],
   "engines": {
     "node": ">=20.5.0"
@@ -25,7 +36,10 @@
     "linux"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "clean": "node scripts/clean-dist.mjs",
+    "build": "tsc -p tsconfig.json && chmod +x dist/cli.js",
+    "prepare": "npm run clean && npm run build",
+    "prepack": "npm run check",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

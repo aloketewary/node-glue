@@ -1,5 +1,4 @@
-/** Public library entry point. */
-export declare const VERSION = "0.1.0";
+export declare const VERSION: string;
 export * from './errors.js';
 export * from './lockfile.js';
 export * from './input-reader.js';

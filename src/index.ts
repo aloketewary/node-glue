@@ -1,5 +1,10 @@
 /** Public library entry point. */
-export const VERSION = '0.1.0';
+import { createRequire } from 'node:module';
+
+const nodeRequire = createRequire(import.meta.url);
+const packageMetadata = nodeRequire('../package.json') as { version: string };
+
+export const VERSION = packageMetadata.version;
 
 export * from './errors.js';
 export * from './lockfile.js';
