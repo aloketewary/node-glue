@@ -1,0 +1,202 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.2 Define domain types, module contracts, typed diagnostics, and injected side-effect adapters": [
+      {
+        "executionId": "646310e3-1a69-4695-88dd-231de5ab27f3",
+        "chatSessionId": "sess_5db02cd9-aa2d-44ec-895e-2cc2b453cc23",
+        "timestamp": 1788289910829
+      },
+      {
+        "executionId": "646310e3-1a69-4695-88dd-231de5ab27f3",
+        "chatSessionId": "sess_5db02cd9-aa2d-44ec-895e-2cc2b453cc23",
+        "timestamp": 1788290941342
+      }
+    ],
+    "1.1 Create the package/CLI scaffold and compiler/test configuration": [
+      {
+        "executionId": "646310e3-1a69-4695-88dd-231de5ab27f3",
+        "chatSessionId": "sess_5db02cd9-aa2d-44ec-895e-2cc2b453cc23",
+        "timestamp": 1788289910886
+      },
+      {
+        "executionId": "646310e3-1a69-4695-88dd-231de5ab27f3",
+        "chatSessionId": "sess_5db02cd9-aa2d-44ec-895e-2cc2b453cc23",
+        "timestamp": 1788290941378
+      }
+    ],
+    "1.3 Build reusable temporary-project, fake-source, fake-store, fake-filesystem, and failure-injection fixtures": [
+      {
+        "executionId": "32101c1c-b85f-45df-b899-6f83d5e5953d",
+        "chatSessionId": "sess_eb19eedb-e10c-477f-97f6-e51595b44724",
+        "timestamp": 1788291000792
+      },
+      {
+        "executionId": "32101c1c-b85f-45df-b899-6f83d5e5953d",
+        "chatSessionId": "sess_eb19eedb-e10c-477f-97f6-e51595b44724",
+        "timestamp": 1788291534014
+      }
+    ],
+    "1. Establish the TypeScript package, module boundaries, and test harness": [
+      {
+        "executionId": "32101c1c-b85f-45df-b899-6f83d5e5953d",
+        "chatSessionId": "sess_eb19eedb-e10c-477f-97f6-e51595b44724",
+        "timestamp": 1788291534070
+      }
+    ],
+    "2.1 Implement project-root discovery and safe `package.json`/lockfile input reading": [
+      {
+        "executionId": "1c8f21d0-c89f-4c46-b930-82c0c6b6a4f2",
+        "chatSessionId": "sess_b879a4ca-143f-432f-bb46-dd2172a21390",
+        "timestamp": 1788291610565
+      },
+      {
+        "executionId": "1c8f21d0-c89f-4c46-b930-82c0c6b6a4f2",
+        "chatSessionId": "sess_b879a4ca-143f-432f-bb46-dd2172a21390",
+        "timestamp": 1788291964616
+      }
+    ],
+    "3.1 Implement registry, local-directory, Git, and tarball source adapters": [
+      {
+        "executionId": "abd2aac4-7b1b-4942-928c-33cb6c734827",
+        "chatSessionId": "sess_be762547-f9d3-4901-9ca0-9077433f9a7b",
+        "timestamp": 1788292036117
+      },
+      {
+        "executionId": "abd2aac4-7b1b-4942-928c-33cb6c734827",
+        "chatSessionId": "sess_be762547-f9d3-4901-9ca0-9077433f9a7b",
+        "timestamp": 1788292998612
+      }
+    ],
+    "4.1 Implement canonical Package Instance identity and environment fingerprinting": [
+      {
+        "executionId": "b6d57da6-eda8-4b35-bb13-17026a89cc1f",
+        "chatSessionId": "sess_55542b0e-dadf-4523-b4f3-fd4c42751da7",
+        "timestamp": 1788293069417
+      },
+      {
+        "executionId": "b6d57da6-eda8-4b35-bb13-17026a89cc1f",
+        "chatSessionId": "sess_55542b0e-dadf-4523-b4f3-fd4c42751da7",
+        "timestamp": 1788293361499
+      }
+    ],
+    "5.1 Implement collision-safe ProjectMapRepository and secret-safe serialization": [
+      {
+        "executionId": "ec7c14f3-dc35-4b45-843c-ad2af1a2d6e1",
+        "chatSessionId": "sess_1f34818d-214b-489e-8455-7d6e6efee08b",
+        "timestamp": 1788293432584
+      },
+      {
+        "executionId": "ec7c14f3-dc35-4b45-843c-ad2af1a2d6e1",
+        "chatSessionId": "sess_1f34818d-214b-489e-8455-7d6e6efee08b",
+        "timestamp": 1788293926444
+      }
+    ],
+    "2.2 Implement package-lock v2/v3 readers and one normalized internal graph representation": [
+      {
+        "executionId": "6317f710-7327-43db-ace6-73842a98b7ac",
+        "chatSessionId": "sess_a1ab364a-0db7-43db-8a5d-cbf1e8081f40",
+        "timestamp": 1788294052215
+      },
+      {
+        "executionId": "6317f710-7327-43db-ace6-73842a98b7ac",
+        "chatSessionId": "sess_a1ab364a-0db7-43db-8a5d-cbf1e8081f40",
+        "timestamp": 1788294793467
+      }
+    ],
+    "4.2 Implement PackageStore acquisition, verification, extraction, reuse, and atomic publication": [
+      {
+        "executionId": "e9c8aa9e-6135-46e7-a746-c87ed2e0168d",
+        "chatSessionId": "sess_dad2e3d4-39e1-4918-a2b6-b8c5c01718da",
+        "timestamp": 1788294929119
+      },
+      {
+        "executionId": "8368a5ae-dec1-405a-a2b5-c5e6e9129909",
+        "chatSessionId": "sess_b9ec973a-1332-4832-aa7f-3c757558a86b",
+        "timestamp": 1788326027430
+      },
+      {
+        "executionId": "8368a5ae-dec1-405a-a2b5-c5e6e9129909",
+        "chatSessionId": "sess_b9ec973a-1332-4832-aa7f-3c757558a86b",
+        "timestamp": 1788326737707
+      }
+    ],
+    "5.2 Implement atomic map/state updates and project/store locks": [
+      {
+        "executionId": "ec8c98c9-bd55-41a9-b731-038b97d6be25",
+        "chatSessionId": "sess_d6e10fef-f2b7-44fe-8388-255a4321b35c",
+        "timestamp": 1788295398049
+      },
+      {
+        "executionId": "ab2c57a7-9c0e-42b1-9bf4-5b12d500b448",
+        "chatSessionId": "sess_ae1a7276-d42d-4fdb-a2c5-fba77eb56280",
+        "timestamp": 1788326871483
+      },
+      {
+        "executionId": "d2df9185-cef3-40eb-8b3f-b49f1b792bdb",
+        "chatSessionId": "sess_89219634-9d33-4cea-92bb-ba0edebad643",
+        "timestamp": 1788329799514
+      },
+      {
+        "executionId": "d2df9185-cef3-40eb-8b3f-b49f1b792bdb",
+        "chatSessionId": "sess_89219634-9d33-4cea-92bb-ba0edebad643",
+        "timestamp": 1788329980526
+      }
+    ],
+    "3.2 Implement the resolver adapter and normalized complete dependency graph": [
+      {
+        "executionId": "55f8a533-24a4-4d35-80be-b87004e630b2",
+        "chatSessionId": "sess_e66ccc5c-0966-4c01-8eb3-6a4d07beef41",
+        "timestamp": 1788324619874
+      },
+      {
+        "executionId": "55f8a533-24a4-4d35-80be-b87004e630b2",
+        "chatSessionId": "sess_e66ccc5c-0966-4c01-8eb3-6a4d07beef41",
+        "timestamp": 1788325928066
+      }
+    ],
+    "6.1 Implement ownership inspection and unmanaged-node_modules fail-closed checks": [
+      {
+        "executionId": "b1169a97-5a22-48cd-b386-59425872dce9",
+        "chatSessionId": "sess_3715ce70-1ab8-418c-a0d2-52e9f513da4d",
+        "timestamp": 1788330655930
+      },
+      {
+        "executionId": "b1169a97-5a22-48cd-b386-59425872dce9",
+        "chatSessionId": "sess_3715ce70-1ab8-418c-a0d2-52e9f513da4d",
+        "timestamp": 1788331198050
+      }
+    ],
+    "7.1 Implement LifecycleRunner with opt-in policy, Project Context, protected store, and output isolation": [
+      {
+        "executionId": "23f54ee0-45fc-4630-846e-e5e10b005547",
+        "chatSessionId": "sess_bc2fdd6c-42ed-47fc-bd33-887b8061612f",
+        "timestamp": 1788331260320
+      },
+      {
+        "executionId": "23f54ee0-45fc-4630-846e-e5e10b005547",
+        "chatSessionId": "sess_bc2fdd6c-42ed-47fc-bd33-887b8061612f",
+        "timestamp": 1788331672042
+      }
+    ],
+    "2.3 Implement canonical lockfile generation and atomic no-lockfile publication": [
+      {
+        "executionId": "3612f061-b70f-4b16-a883-10f645637fb6",
+        "chatSessionId": "sess_b839a9a1-9e94-49a6-8cf5-dc843c094471",
+        "timestamp": 1788331833608
+      },
+      {
+        "executionId": "3612f061-b70f-4b16-a883-10f645637fb6",
+        "chatSessionId": "sess_b839a9a1-9e94-49a6-8cf5-dc843c094471",
+        "timestamp": 1788332546219
+      }
+    ],
+    "3.3 Add property tests for graph identity and peer context": [
+      {
+        "executionId": "8c645794-f443-4121-a644-9b4b749d9856",
+        "chatSessionId": "sess_ab1bade7-d165-4c80-aa2a-3ed7e0583422",
+        "timestamp": 1788332607822
+      }
+    ]
+  }
+}

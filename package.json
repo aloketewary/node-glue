@@ -1,0 +1,46 @@
+{
+  "name": "node-glue",
+  "version": "0.1.0",
+  "description": "Maven-like local package repository for Node.js projects",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "node-glue": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.5.0"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@npmcli/arborist": "8.0.0",
+    "cacache": "19.0.1",
+    "pacote": "19.0.0",
+    "semver": "7.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.3",
+    "fast-check": "4.1.1",
+    "typescript": "5.8.3",
+    "vitest": "3.2.4"
+  }
+}
