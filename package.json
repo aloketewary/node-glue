@@ -54,9 +54,9 @@
     "check": "npm run typecheck && npm test"
   },
   "dependencies": {
-    "@npmcli/arborist": "8.0.0",
+    "@npmcli/arborist": "10.0.2",
     "cacache": "19.0.1",
-    "pacote": "19.0.0",
+    "pacote": "22.0.0",
     "semver": "7.7.2"
   },
   "devDependencies": {
